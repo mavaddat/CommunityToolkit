@@ -11,6 +11,8 @@ The `MaxLengthReachedBehavior` is a `Behavior` that allows the user to trigger a
 
 Additionally it is possible to dismiss the keyboard when the maximum length is reached via the `ShouldDismissKeyboardAutomatically` property which defaults to `false`.
 
+[!INCLUDE [important note on bindings within behaviors](../includes/behavior-bindings.md)]
+
 ## Syntax
 
 ### XAML
@@ -24,16 +26,20 @@ Additionally it is possible to dismiss the keyboard when the maximum length is r
 The `MaxLengthReachedBehavior` can be used as follows in XAML:
 
 ```xaml
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="CommunityToolkit.Maui.Sample.Pages.Behaviors.MaxLengthReachedBehaviorPage">
+<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Class="CommunityToolkit.Maui.Sample.Pages.Behaviors.MaxLengthReachedBehaviorPage"
+    x:Name="Page">
 
     <Entry Placeholder="Start typing until MaxLength is reached..."
-           MaxLength="100">
+           MaxLength="100"
+           x:Name="MaxLengthEntry">
         <Entry.Behaviors>
-            <toolkit:MaxLengthReachedBehavior 
-                Command="{Binding MaxLengthReachedCommand}" />
+            <toolkit:MaxLengthReachedBehavior
+                BindingContext="{Binding Path=BindingContext, Source={x:Reference MaxLengthEntry}, x:DataType=Entry}"
+                Command="{Binding Source={x:Reference Page}, Path=BindingContext.MaxLengthReachedCommand, x:DataType=ContentPage}" />
         </Entry.Behaviors>
     </Entry>
 
@@ -59,10 +65,8 @@ class MaxLengthReachedBehaviorPage : ContentPage
         var behavior = new MaxLengthReachedBehavior();
         behavior.SetBinding(
             MaxLengthReachedBehavior.CommandProperty,
-            new Binding(
-                nameof(ViewModel.MaxLengthReachedCommand)
-            )
-        );
+            static (MaxLengthReachedBehaviorViewModel vm) => vm.MaxLengthReachedCommand,
+            source: this.BindingContext);
 
         entry.Behaviors.Add(behavior);
 
@@ -87,9 +91,10 @@ class MaxLengthReachedBehaviorPage : ContentPage
             Placeholder = "Start typing until MaxLength is reached...",
             MaxLength = 100
         }.Behaviors(
-            new MaxLengthReachedBehavior().Bind(
-                MaxLengthReachedBehavior.CommandProperty,
-                static (ViewModel vm) => vm.MaxLengthReachedCommand));
+            new MaxLengthReachedBehavior()
+            .Bind(MaxLengthReachedBehavior.CommandProperty,
+                getter: static (ViewModel vm) => vm.MaxLengthReachedCommand,
+                source: this.BindingContext));
     }
 }
 ```
