@@ -1,13 +1,13 @@
 ---
 title: ColorToHexRgbStringConverter - .NET MAUI Community Toolkit
 author: bijington
-description: "The ColorToHexRgbStringConverter is a one way converter that allows users to convert a Color value binding to its RGB hexadecimal string equivalent."
-ms.date: 04/15/2022
+description: "The ColorToHexRgbStringConverter is a converter that allows users to convert a Color value binding to its RGB hexadecimal string equivalent."
+ms.date: 02/15/2024
 ---
 
 # ColorToHexRgbStringConverter
 
-The `ColorToHexRgbStringConverter` is a that allows users to convert a `Color` value binding to its RGB hexadecimal `string` equivalent in the format: **#redgreenblue** where **red**, **green** and **blue** will be a value between 0 and FF (e.g. **#FF0000** for `Colors.Red`.
+The `ColorToHexRgbStringConverter` is a converter that allows users to convert a `Color` value binding to its RGB hexadecimal `string` equivalent in the format: **#redgreenblue** where **red**, **green** and **blue** will be a value between 0 and FF (e.g. **#FF0000** for `Colors.Red`.
 
 The `Convert` method returns the supplied `Color` `value` converted to its RGB hexadecimal `string` equivalent.
 
@@ -61,20 +61,20 @@ class ColorToHexRgbStringConverterPage : ContentPage
     {
         var label = new Label();
 
-	label.SetBinding(
-		Label.TextProperty,
-		new Binding(
-			nameof(ViewModel.MyFavoriteColor),
-			converter: new ColorToHexRgbStringConverter()));
+        label.SetBinding(
+            Label.TextProperty,
+            new Binding(
+                static (ViewModel vm) => vm.MyFavoriteColor,
+                converter: new ColorToHexRgbStringConverter()));
 
-	Content = new VerticalStackLayout
-	{
-		Children =
-		{
-			new Label { Text = "My favourite Color is:" },
-			label
-		}
-	};
+        Content = new VerticalStackLayout
+        {
+            Children =
+            {
+                new Label { Text = "My favourite Color is:" },
+                label
+            }
+        };
     }
 }
 ```
